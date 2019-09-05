@@ -13,6 +13,15 @@ redshift = boto3.client('redshift',
                        aws_secret_access_key=SECRET
                        )
 
+iam = boto3.client('iam',aws_access_key_id=KEY,
+                     aws_secret_access_key=SECRET,
+                     region_name='us-west-2'
+                  )
+
+roleArn = iam.get_role(RoleName='dwhRole')['Role']['Arn']
+
+print(config.get("CLUSTER","DB_NAME"))
+
 try:
     response = redshift.create_cluster(        
         ClusterType=config.get("INFRA","DWH_CLUSTER_TYPE"),
@@ -21,7 +30,8 @@ try:
         ClusterIdentifier=config.get("INFRA","DWH_CLUSTER_IDENTIFIER"),
         DBName=config.get("CLUSTER","DB_NAME"),
         MasterUsername=config.get("CLUSTER","DB_USER"),
-        MasterUserPassword=config.get("CLUSTER","DB_PASSWORD")
+        MasterUserPassword=config.get("CLUSTER","DB_PASSWORD"),
+        IamRoles=[roleArn]
     )
 except Exception as e:
     print(e)
