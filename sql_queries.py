@@ -4,6 +4,10 @@ import configparser
 # CONFIG
 config = configparser.ConfigParser()
 config.read('dwh.cfg')
+IAM_ARN = config.get("IAM_ROLE","ARN")
+LOG_DATA = config.get("S3","LOG_DATA")
+LOG_JSONPATH = config.get("S3","LOG_JSONPATH")
+SONG_DATA = config.get("S3","SONG_DATA")
 
 # DROP TABLES
 
@@ -19,21 +23,22 @@ time_table_drop = "DROP TABLE IF EXISTS time"
 
 staging_events_table_create= ("""
     CREATE TABLE staging_events (
-        artist_name         VARCHAR(100),
+        artist_name         VARCHAR(200),
         auth                VARCHAR(20),
-        first_name          VARCHAR(100) NOT NULL,
+        first_name          VARCHAR(100),
         gender              CHARACTER,
         itemInSession       INT,
-        last_name           VARCHAR(100) NOT NULL,
+        last_name           VARCHAR(100),
+        length              NUMERIC(12, 5),
         level               VARCHAR(20),
         location            VARCHAR(100),
         method              VARCHAR(10),
         page                VARCHAR(20),
-        registration        NUMERIC(12,5),
+        registration        FLOAT,
         sessionId           INT,
-        song                VARCHAR(200) NOT NULL,
+        song                VARCHAR(200),
         status              INT,
-        ts                  INT,
+        ts                  INT8,
         userAgent           TEXT,
         userID              INT
     )
@@ -44,13 +49,13 @@ staging_songs_table_create = ("""
         song_id             VARCHAR(20) NOT NULL,
         num_songs           INT,
         title               VARCHAR(200) NOT NULL,
-        artist_name         VARCHAR(100),
+        artist_name         VARCHAR(200),
         artist_latitude     NUMERIC(12,5),
         year                INT,
         duration            NUMERIC(12,5),
         artist_id           VARCHAR(20) NOT NULL,
         artist_longitude    NUMERIC(12,5),
-        artist_location     VARCHAR(100)
+        artist_location     VARCHAR(200)
     );
 """)
 
@@ -115,14 +120,16 @@ time_table_create = ("""
 staging_events_copy = ("""
     copy staging_events from {}
     credentials 'aws_iam_role={}'
-    compupdate off region 'us-west-2';
-""").format(config.get("S3","LOG_DATA"), config.get("IAM_ROLE","ARN"))
+    json {}
+    region 'us-west-2'
+""").format(LOG_DATA, IAM_ARN, LOG_JSONPATH)
 
 staging_songs_copy = ("""
-    copy staging_events from {}
+    copy staging_songs from {}
     credentials 'aws_iam_role={}'
-    compupdate off region 'us-west-2';
-""").format(config.get("S3","SONG_DATA"), config.get("IAM_ROLE","ARN"))
+    json 'auto'
+    region 'us-west-2'
+""").format(SONG_DATA, IAM_ARN)
 
 # FINAL TABLES
 

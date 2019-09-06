@@ -1,6 +1,9 @@
 import configparser
 import psycopg2
-from sql_queries import drop_table_queries, create_table_queries, copy_table_queries, insert_table_queries
+from sql_queries import drop_table_queries, \
+                        create_table_queries, \
+                        copy_table_queries, \
+                        insert_table_queries
 
 def drop_tables(cur, conn):
     for query in drop_table_queries:
@@ -18,7 +21,6 @@ def load_staging_tables(cur, conn):
     for query in copy_table_queries:
         cur.execute(query)
         conn.commit()
-
 
 def insert_tables(cur, conn):
     for query in insert_table_queries:
