@@ -96,8 +96,8 @@ song_table_create = ("""
 artist_table_create = ("""
     CREATE TABLE artists (
         artist_id           VARCHAR(20) PRIMARY KEY,
-        artist_name         VARCHAR(100) NOT NULL,
-        artist_location     VARCHAR(100),
+        artist_name         VARCHAR(200) NOT NULL,
+        artist_location     VARCHAR(200),
         artist_latitude     NUMERIC(12,5),
         artist_longitude    NUMERIC(12,5) 
     )
@@ -153,7 +153,10 @@ user_table_insert = ("""
         last_name, 
         gender, 
         level
-    ) 
+    )      
+    SELECT DISTINCT userid, first_name, last_name, gender, level
+    FROM staging_events
+    WHERE userid IS NOT NULL
 """)
 
 song_table_insert = ("""
@@ -163,7 +166,10 @@ song_table_insert = ("""
         artist_id,
         year,
         duration
-    ) 
+    )
+    SELECT DISTINCT song_id, title, artist_id, year, duration
+    FROM staging_songs
+    WHERE song_id IS NOT NULL
 """)
 
 artist_table_insert = ("""
@@ -173,7 +179,10 @@ artist_table_insert = ("""
         artist_location,
         artist_latitude,
         artist_longitude
-    ) 
+    )
+    SELECT DISTINCT artist_id, artist_name, artist_location, artist_latitude, artist_longitude
+    FROM staging_songs
+    WHERE artist_id IS NOT NULL
 """)
 
 time_table_insert = ("""
@@ -205,4 +214,4 @@ create_table_queries = [staging_events_table_create, staging_songs_table_create,
 drop_table_queries = [staging_events_table_drop, staging_songs_table_drop, songplay_table_drop, user_table_drop, song_table_drop, artist_table_drop, time_table_drop]
 copy_table_queries = [staging_events_copy, staging_songs_copy]
 #insert_table_queries = [songplay_table_insert, user_table_insert, song_table_insert, artist_table_insert, time_table_insert]
-insert_table_queries = [time_table_insert]
+insert_table_queries = [user_table_insert, song_table_insert, artist_table_insert, time_table_insert]
