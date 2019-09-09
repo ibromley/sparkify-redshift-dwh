@@ -20,8 +20,6 @@ iam = boto3.client('iam',aws_access_key_id=KEY,
 
 roleArn = iam.get_role(RoleName='dwhRole')['Role']['Arn']
 
-print(config.get("CLUSTER","DB_NAME"))
-
 try:
     response = redshift.create_cluster(        
         ClusterType=config.get("INFRA","DWH_CLUSTER_TYPE"),
