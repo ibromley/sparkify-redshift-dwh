@@ -10,7 +10,9 @@ This database serves analytical data repository for Sparkify, a startup which bu
 
 ### Requirements
 
-You'll need this software installed on your system 
+You'll need an [AWS](https://aws.amazon.com/) account with the resources to provision a Redshift cluster (recommended: 4 x dc2.large EC2 instances)
+
+You'll also need this software installed on your system 
 * [PostgreSQL](https://www.postgresql.org/download/)
 * [Python](https://www.python.org/downloads/)
 
@@ -20,6 +22,9 @@ pip install psycopg2
 ```
 
 ### Quick Start
+
+Provision a Redshift cluster within AWS utilizing either the Quick Launch wizard, [AWS CLI](https://docs.aws.amazon.com/cli/index.html), or the various AWS SDKs (e.g. [boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/index.html) for python).
+
 Create the database tables by running the `create_tables.py` script, followed by `etl.py` to perform the data loading.
 
 ```
