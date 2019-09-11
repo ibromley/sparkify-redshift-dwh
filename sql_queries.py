@@ -60,8 +60,8 @@ staging_songs_table_create = ("""
 
 songplay_table_create = ("""
     CREATE TABLE songplays ( 
-        songplays_id        INT IDENTITY(0,1) PRIMARY KEY,
-        ts                  TIMESTAMP REFERENCES time(ts),
+        songplays_id        INT IDENTITY(0,1) PRIMARY KEY DISTKEY,
+        ts                  TIMESTAMP NOT NULL SORTKEY REFERENCES time(ts),
         user_id             INT REFERENCES users(user_id),
         level               VARCHAR(20),
         song_id             VARCHAR(20) REFERENCES songs(song_id),
@@ -74,7 +74,7 @@ songplay_table_create = ("""
 
 user_table_create = ("""
     CREATE TABLE users (
-        user_id             INT PRIMARY KEY,
+        user_id             INT PRIMARY KEY SORTKEY DISTKEY,
         first_name          VARCHAR(100) NOT NULL,
         last_name           VARCHAR(100) NOT NULL,
         gender              CHARACTER,
@@ -84,7 +84,7 @@ user_table_create = ("""
 
 song_table_create = ("""
     CREATE TABLE songs (
-        song_id             VARCHAR(20) PRIMARY KEY,
+        song_id             VARCHAR(20) PRIMARY KEY SORTKEY DISTKEY,
         title               VARCHAR(200) NOT NULL,
         artist_id           VARCHAR(20) REFERENCES artists(artist_id),
         year                INT,
@@ -94,7 +94,7 @@ song_table_create = ("""
 
 artist_table_create = ("""
     CREATE TABLE artists (
-        artist_id           VARCHAR(20) PRIMARY KEY,
+        artist_id           VARCHAR(20) PRIMARY KEY SORTKEY DISTKEY,
         artist_name         VARCHAR(200) NOT NULL,
         artist_location     VARCHAR(200),
         artist_latitude     NUMERIC(12,5),
@@ -104,7 +104,7 @@ artist_table_create = ("""
 
 time_table_create = ("""
     CREATE TABLE time (
-        ts                  TIMESTAMP PRIMARY KEY,
+        ts                  TIMESTAMP PRIMARY KEY SORTKEY DISTKEY,
         hour                INT NOT NULL,
         day                 INT NOT NULL,
         week_of_year        INT NOT NULL,
